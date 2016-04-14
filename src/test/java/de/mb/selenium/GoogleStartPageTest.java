@@ -16,7 +16,8 @@ import org.openqa.selenium.remote.RemoteWebDriver;
 
 public class GoogleStartPageTest {
 
-	private WebDriver driver;
+	private WebDriver ffDriver;
+	private WebDriver chromeDriver;
 
 	@Before
 	public void setUp() throws MalformedURLException {
@@ -27,29 +28,32 @@ public class GoogleStartPageTest {
 		}
 		DesiredCapabilities capability = DesiredCapabilities.firefox();
 		URL gridUrl = new URL(gridServerUrl);
-		driver = new RemoteWebDriver(gridUrl, capability);
-		driver.get("http://www.google.com");
+		ffDriver = new RemoteWebDriver(gridUrl, capability);
+		ffDriver.get("http://www.google.com");
+		chromeDriver = new RemoteWebDriver(gridUrl, DesiredCapabilities.chrome());
 	}
 
 	@After
 	public void tearDownWebDriver() {
-		driver.quit();
+		ffDriver.quit();
+		chromeDriver.quit();
 	}
 
 	@Test
 	public void pageTitleIsNotNull() throws MalformedURLException {
-		WebElement element = driver.findElement(By.name("q"));
+		WebElement element = ffDriver.findElement(By.name("q"));
 		element.sendKeys("Cheese!");
 		element.submit();
-		assertTrue(driver.getTitle() != null);
+		assertTrue(ffDriver.getTitle() != null);
 	}
 
 	@Test
 	public void pageTitleContainsGoogle() throws MalformedURLException {
-		WebElement element = driver.findElement(By.name("q"));
+		chromeDriver.get("http://www.google.com");
+		WebElement element = ffDriver.findElement(By.name("q"));
 		element.sendKeys("Cheese!");
 		element.submit();
-		assertTrue(driver.getTitle().contains("Google"));
+		assertTrue(ffDriver.getTitle().contains("Google"));
 	}
 
 }
